@@ -1,6 +1,6 @@
 
 pool:
-  vmImage: 'windows-2022'
+  vmImage: 'hosted-agent'
 
 #name: '$(MajorVersion).$(MinorVersion).$(PatchVersion) - $(BuildVersion) ($(Date:yyyyMMdd HHmmss))'
 name: 'Windows AutoBuild Test - Flutter'
