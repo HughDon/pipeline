@@ -1,0 +1,55 @@
+
+pool:
+  vmImage: 'windows-2022'
+
+#name: '$(MajorVersion).$(MinorVersion).$(PatchVersion) - $(BuildVersion) ($(Date:yyyyMMdd HHmmss))'
+name: 'Windows AutoBuild Test - Flutter'
+
+jobs:
+  - job: "Flutter_Builds"
+    timeoutInMinutes: 120
+
+    steps:
+      # Java Tool Installation
+      - task: JavaToolInstaller@0
+        displayName: 'Java Tool Installation'
+        inputs:
+          versionSpec: '17'
+          jdkArchitectureOption: 'x64'
+          jdkSourceOption: 'PreInstalled'
+
+      # Flutter Installation
+      - task: FlutterInstall@0
+        displayName: 'Flutter Installation'
+        inputs:
+          mode: "auto"
+          channel: "stable"
+          version: "custom"
+          customVersion: "3.22.3"
+
+      # Flutter Clean
+      - task: Bash@3
+        displayName: 'Flutter clean'
+        inputs:
+          targetType: 'inline'
+          script: |
+            flutter clean
+
+      # Flutter Pub Get
+      - task: Bash@3
+        displayName: 'Flutter Pub Get'
+        inputs:
+          targetType: 'inline'
+          script: |
+            flutter pub get
+
+      - script: |
+          mkdir C:\src
+          xcopy /E /I /Y . C:\src
+        displayName: 'Copy source to short path'
+
+      - script: |
+          cd C:\src
+          flutter build windows --release --target lib/main_attendant$(BuildTypeLower).dart
+        displayName: 'Build Flutter Windows Directory'
+
